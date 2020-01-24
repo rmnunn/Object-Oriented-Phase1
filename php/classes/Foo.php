@@ -83,7 +83,7 @@ class author {
 	 * @throws \TypeError if the activation token is not a string
 	 */
 	public function setAuthorActivationToken(?string $newAuthorActivationToken) : void {
-		if ($newAuthorActivationToken === null) {
+		if($newAuthorActivationToken === null) {
 			$this->authorActivationToken = null;
 			return;
 		}
@@ -96,13 +96,49 @@ class author {
 			throw(new\RangeException("author activation token has to be 32 characters"));
 		}
 		$this->authorActivationToken = $newAuthorActivationToken;
+	}
 	/**
 	 * accessor method for author avatar url
 	 * @return string value of avatar url
 	 */
-	public function getAuthorAvatarUrl() {
+	public function getAuthorAvatarUrl() : ?string {
+			return ($this->authorAvatarUrl);
+		}
+	/**
+	 * mutator method for author avatar url
+	 *
+	 * @param string $newAuthorAvatarUrl
+	 *
+	 * @throws /RangeException if the author avatar url string is too long
+	 */
+	public function setAuthorAvatarUrl(?string $newAuthorAvatarUrl) : void {
+		if ($newAuthorAvatarUrl === null) {
+			$this->authorAvatarUrl = null;
+			return;
+		}
+		if (strlen($newAuthorAvatarUrl) > 255) {
+			throw (new\RangeException("Avatar URL can only be a max of 255 characters"));
+		}
+		$this->authorAvatarUrl = $newAuthorAvatarUrl;
+	}
+	/**
+	 * accessor method for author email
+	 * @returns string value of authors email
+	 */
+	public function getAuthorEmail() : ?string {
+		return ($this->authorEmail);
+	}
+	/**
+	 * mutator method for author email
+	 *
+	 * @param string $authorEmail
+	 *
+	 * @throws /RangeException if author email string is null or too long
+	 */
+	public function setAuthorEmail(?string $newAuthorEmail) : void {
 
 	}
 }
+
 
 
