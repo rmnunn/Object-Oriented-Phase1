@@ -121,6 +121,7 @@ class author {
 		}
 		$this->authorAvatarUrl = $newAuthorAvatarUrl;
 	}
+
 	/**
 	 * accessor method for author email
 	 * @returns string value of authors email
@@ -131,12 +132,69 @@ class author {
 	/**
 	 * mutator method for author email
 	 *
-	 * @param string $authorEmail
+	 * @param string $newAuthorEmail
 	 *
 	 * @throws /RangeException if author email string is null or too long
 	 */
 	public function setAuthorEmail(?string $newAuthorEmail) : void {
+		if ($newAuthorEmail === null) {
+			throw (new\RangeException("author needs an email"));
+		}
+		if (strlen($newAuthorEmail) > 128) {
+			throw (new\RangeException("author email can be a max of 128 characters"));
+		}
+		$this->authorEmail = $newAuthorEmail;
+	}
 
+	/**
+	 * accessor method for author hash
+	 *
+	 * @returns string value of author hash
+	 */
+	public function getAuthorHash() : ?string {
+		return ($this->authorHash);
+	}
+	/**
+	 * mutator method for author hash
+	 *
+	 * @param string $newAuthorHash
+	 *
+	 * @throws /RangeException if hash is hash string is null
+	 * @throws /RangeException if hash isn't exactly 97 characters
+	 */
+	public function setAuthorHash(?string $newAuthorHash) : void {
+		if ($newAuthorHash === null) {
+			throw (new\RangeException("author needs a hash"));
+		}
+		if (strlen($newAuthorHash) !== 97) {
+			throw (new\RangeException("hash must be 97 characters long"));
+		}
+		$this->authorHash = $newAuthorHash;
+	}
+
+	/**
+	 * accessor method for author username
+	 * @returns string author username
+	 */
+	public function getAuthorUserName() : ?string {
+		return ($this->authorUserName);
+	}
+	/**
+	 * mutator method for author user name
+	 *
+	 * @param string $newAuthorUserName
+	 *
+	 * @throws /RangeException if username is null
+	 * @throws /RangeException if username is more than 32 characters
+	 */
+	public  function setAuthorUserName(?string $newAuthorUserName) : void {
+		if ($newAuthorUserName === null) {
+			throw (new\RangeException("author needs a username"));
+		}
+		if (strlen($newAuthorUserName) > 32) {
+			throw (new\RangeException("username must not be longer than 32 characters"));
+		}
+		$this->authorUserName = $newAuthorUserName;
 	}
 }
 
