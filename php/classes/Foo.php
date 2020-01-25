@@ -1,13 +1,22 @@
 <?php
 
+namespace Deepdivedylan\DataDesign;
+
+require_once("autoload.php");
+require_once(dirname(__DIR__) . "/vendor/autoload.php");
+
+use Ramsey\Uuid\Uuid;
+
 /**
-* Author of a Tweet
+* Author of Something
 *
  *This author class will store all the necessary data to keep on the author (profile)
  *
  * @author Reece Nunn
  **/
-class author {
+
+class author implements \JsonSerializable {
+	use ValidateDate;
 	use ValidateUuid;
 	/**
 	 * id for this author; this is the primary key
@@ -204,18 +213,21 @@ class author {
 	 * @param $newAuthorActivationToken activation token for this author
 	 * @param string $newAuthorAvatarUrl string containing author avatar url
 	 * @param string $newAuthorEmail string containing author's email address
+	 * @param $newAuthorHash author's hashed password
+	 * @param string $newAuthorUserName author's user name
 	 * @throws \InvalidArgumentException if data types are not valid
 	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
 	 * @throws \TypeError if data types violate type hints
 	 * @throws \Exception if some other exception occurs
-	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
 	 **/
-	public function __construct($newAuthorId, $newAuthorActivationToken, string $newAuthorAvatarUrl, $newAuthorEmail) {
+	public function __construct($newAuthorId, $newAuthorActivationToken, string $newAuthorAvatarUrl, string $newAuthorEmail, $newAuthorHash, string $newAuthorUserName) {
 		try {
 			$this->setAuthorId($newAuthorId);
 			$this->setAuthorActivationToken($newAuthorActivationToken);
 			$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
 			$this->setAuthorEmail($newAuthorEmail);
+			$this->setAuthorHash($newAuthorHash);
+			$this->setAuthorUserName($newAuthorUserName);
 		}
 			//determine what exception type was thrown
 		catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
