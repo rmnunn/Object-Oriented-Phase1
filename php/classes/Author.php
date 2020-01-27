@@ -25,7 +25,7 @@ class Author implements \JsonSerializable {
 	private $authorId;
 	/**
 	 * token handed out to verify that the profile is valid and not malicious
-	 * @var Uuid $authorActivationToken
+	 * @var String $authorActivationToken
 	 */
 	private $authorActivationToken;
 	/**
@@ -50,6 +50,36 @@ class Author implements \JsonSerializable {
 	private $authorUserName;
 
 	/**
+	 * constructor for this Author
+	 *
+	 * @param string|Uuid $newAuthorId id of this author
+	 * @param Uuid $newAuthorActivationToken activation token for this author
+	 * @param string $newAuthorAvatarUrl string containing author avatar url
+	 * @param string $newAuthorEmail string containing author's email address
+	 * @param $newAuthorHash author's hashed password
+	 * @param string $newAuthorUserName author's user name
+	 * @throws \InvalidArgumentException if data types are not valid
+	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
+	 * @throws \TypeError if data types violate type hints
+	 * @throws \Exception if some other exception occurs
+	 **/
+	public function __construct(Uuid $newAuthorId, String $newAuthorActivationToken, string $newAuthorAvatarUrl, string $newAuthorEmail, $newAuthorHash, string $newAuthorUserName) {
+		try {
+			$this->setAuthorId($newAuthorId);
+			$this->setAuthorActivationToken($newAuthorActivationToken);
+			$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
+			$this->setAuthorEmail($newAuthorEmail);
+			$this->setAuthorHash($newAuthorHash);
+			$this->setAuthorUserName($newAuthorUserName);
+		}
+			//determine what exception type was thrown
+		catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			$exceptionType = get_class($exception);
+			throw(new $exceptionType($exception->getMessage(), 0, $exception));
+		}
+	}
+
+	/**
 	 * accessor method for author id
 	 *
 	 * @return Uuid
@@ -64,7 +94,7 @@ class Author implements \JsonSerializable {
 	 * @throws \RangeException if $newAuthorId is not positive
 	 * @throws \TypeError if the profile Id is not a uuid
 	 */
-	public function setAuthorId($newAuthorId): void {
+	public function setAuthorId(Uuid $newAuthorId): void {
 		try {
 			$uuid = self::validateUuid($newAuthorId);
 		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -79,19 +109,19 @@ class Author implements \JsonSerializable {
 	 *
 	 * @return string value of activation token
 	 */
-	public function getAuthorActivationToken() : ?string {
+	public function getAuthorActivationToken() : ?String {
 		return ($this->authorActivationToken);
 	}
 	/**
 	 * mutator method for author activation token
 	 *
-	 * @param string $newAuthorActivationToken
+	 * @param String $newAuthorActivationToken
 	 *
 	 * @throws \InvalidArgumentException  if the token is not a string or insecure
 	 * @throws \RangeException if the token is not exactly 32 characters
 	 * @throws \TypeError if the activation token is not a string
 	 */
-	public function setAuthorActivationToken(?string $newAuthorActivationToken) : void {
+	public function setAuthorActivationToken(?String $newAuthorActivationToken) : void {
 		if($newAuthorActivationToken === null) {
 			$this->authorActivationToken = null;
 			return;
@@ -204,36 +234,6 @@ class Author implements \JsonSerializable {
 			throw (new\RangeException("username must not be longer than 32 characters"));
 		}
 		$this->authorUserName = $newAuthorUserName;
-	}
-
-	/**
-	 * constructor for this Author
-	 *
-	 * @param string|Uuid $newAuthorId id of this author
-	 * @param Uuid $newAuthorActivationToken activation token for this author
-	 * @param string $newAuthorAvatarUrl string containing author avatar url
-	 * @param string $newAuthorEmail string containing author's email address
-	 * @param $newAuthorHash author's hashed password
-	 * @param string $newAuthorUserName author's user name
-	 * @throws \InvalidArgumentException if data types are not valid
-	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
-	 * @throws \TypeError if data types violate type hints
-	 * @throws \Exception if some other exception occurs
-	 **/
-	public function __construct($newAuthorId, $newAuthorActivationToken, string $newAuthorAvatarUrl, string $newAuthorEmail, $newAuthorHash, string $newAuthorUserName) {
-		try {
-			$this->setAuthorId($newAuthorId);
-			$this->setAuthorActivationToken($newAuthorActivationToken);
-			$this->setAuthorAvatarUrl($newAuthorAvatarUrl);
-			$this->setAuthorEmail($newAuthorEmail);
-			$this->setAuthorHash($newAuthorHash);
-			$this->setAuthorUserName($newAuthorUserName);
-		}
-			//determine what exception type was thrown
-		catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
-			$exceptionType = get_class($exception);
-			throw(new $exceptionType($exception->getMessage(), 0, $exception));
-		}
 	}
 
 	/**
