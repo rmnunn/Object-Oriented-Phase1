@@ -1,5 +1,5 @@
 <?php
-namespace Deepdivedylan\DataDesign;
+namespace rmnunn\ObjectOrientedPhase1;
 /**
  * Trait to Validate a mySQL Date
  *
@@ -17,12 +17,12 @@ trait ValidateDate {
 	 *
 	 * @param \DateTime|string $newDate date to validate
 	 * @return \DateTime DateTime object containing the validated date
+	 * @see http://php.net/manual/en/class.datetime.php PHP's DateTime class
 	 * @throws \InvalidArgumentException if the date is in an invalid format
 	 * @throws \RangeException if the date is not a Gregorian date
 	 * @throws \TypeError when type hints fail
-	 **@see http://php.net/manual/en/class.datetime.php PHP's DateTime class
-	 */
-	private static function validateDate($newDate): \DateTime {
+	 **/
+	private static function validateDate($newDate) : \DateTime {
 		// base case: if the date is a DateTime object, there's no work to be done
 		if(is_object($newDate) === true && get_class($newDate) === "DateTime") {
 			return ($newDate);
@@ -41,9 +41,8 @@ trait ValidateDate {
 		}
 		// if we got here, the date is clean
 		$newDate = \DateTime::createFromFormat("Y-m-d H:i:s", $newDate . " 00:00:00");
-		return ($newDate);
+		return($newDate);
 	}
-
 	/**
 	 * custom filter for mySQL style dates
 	 *
@@ -51,16 +50,16 @@ trait ValidateDate {
 	 *
 	 * @param mixed $newDateTime date to validate
 	 * @return \DateTime DateTime object containing the validated date
+	 * @see http://php.net/manual/en/class.datetime.php PHP's DateTime class
 	 * @throws \InvalidArgumentException if the date is in an invalid format
 	 * @throws \RangeException if the date is not a Gregorian date
 	 * @throws \TypeError when type hints fail
 	 * @throws \Exception if some other error occurs
-	 **@see http://php.net/manual/en/class.datetime.php PHP's DateTime class
-	 */
-	private static function validateDateTime($newDateTime): \DateTime {
+	 **/
+	private static function validateDateTime($newDateTime) : \DateTime {
 		// base case: if the date is a DateTime object, there's no work to be done
 		if(is_object($newDateTime) === true && get_class($newDateTime) === "DateTime") {
-			return ($newDateTime);
+			return($newDateTime);
 		}
 		try {
 			list($date, $time) = explode(" ", $newDateTime);
@@ -69,13 +68,12 @@ trait ValidateDate {
 			list($hour, $minute, $second) = explode(":", $time);
 			list($second, $microseconds) = explode(".", $second);
 			$date->setTime($hour, $minute, $second, $microseconds);
-			return ($date);
+			return($date);
 		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
 			$exceptionType = get_class($exception);
 			throw(new $exceptionType($exception->getMessage(), 0, $exception));
 		}
 	}
-
 	/**
 	 * custom filter for mySQL style times
 	 *
@@ -83,11 +81,11 @@ trait ValidateDate {
 	 *
 	 * @param string $newTime time to validate
 	 * @return string validated time as a string H:i:s[.u]
+	 * @see http://php.net/manual/en/class.datetime.php PHP's DateTime class
 	 * @throws \InvalidArgumentException if the date is in an invalid format
 	 * @throws \RangeException if the date is not a Gregorian date
-	 **@see http://php.net/manual/en/class.datetime.php PHP's DateTime class
-	 */
-	private static function validateTime(string $newTime): string {
+	 **/
+	private static function validateTime(string $newTime) : string {
 		// treat the date as a mySQL date string: H:i:s[.u]
 		$newTime = trim($newTime);
 		if((preg_match("/^(\d{2}):(\d{2}):(\d{2})(?(?=\.)\.(\d{1,6}))$/", $newTime, $matches)) !== 1) {
@@ -98,13 +96,13 @@ trait ValidateDate {
 		$minute = intval($matches[2]);
 		$second = intval($matches[3]);
 		// verify the time is really a valid wall clock time
-		if($hour < 0 || $hour >= 24 || $minute < 0 || $minute >= 60 || $second < 0 || $second >= 60) {
+		if($hour < 0 || $hour >= 24 || $minute < 0 || $minute >= 60 || $second < 0  || $second >= 60) {
 			throw(new \RangeException("date is not a valid wall clock time"));
 		}
 		// put a placeholder for microseconds if they do not exist
 		$microseconds = $matches[4] ?? "0";
 		$newTime = "$hour:$minute:$second.$microseconds";
 		// if we got here, the date is clean
-		return ($newTime);
+		return($newTime);
 	}
 }

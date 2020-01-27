@@ -1,6 +1,6 @@
 <?php
 
-namespace Deepdivedylan\DataDesign;
+namespace rmnunn\ObjectOrientedPhase1;
 
 require_once("autoload.php");
 require_once(dirname(__DIR__) . "/vendor/autoload.php");
@@ -15,7 +15,7 @@ use Ramsey\Uuid\Uuid;
  * @author Reece Nunn
  **/
 
-class author implements \JsonSerializable {
+class Author implements \JsonSerializable {
 	use ValidateDate;
 	use ValidateUuid;
 	/**
