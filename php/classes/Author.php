@@ -25,7 +25,7 @@ class Author implements \JsonSerializable {
 	private $authorId;
 	/**
 	 * token handed out to verify that the profile is valid and not malicious
-	 * @var $authorActivationToken
+	 * @var Uuid $authorActivationToken
 	 */
 	private $authorActivationToken;
 	/**
@@ -210,7 +210,7 @@ class Author implements \JsonSerializable {
 	 * constructor for this Author
 	 *
 	 * @param string|Uuid $newAuthorId id of this author
-	 * @param $newAuthorActivationToken activation token for this author
+	 * @param Uuid $newAuthorActivationToken activation token for this author
 	 * @param string $newAuthorAvatarUrl string containing author avatar url
 	 * @param string $newAuthorEmail string containing author's email address
 	 * @param $newAuthorHash author's hashed password
@@ -235,7 +235,19 @@ class Author implements \JsonSerializable {
 			throw(new $exceptionType($exception->getMessage(), 0, $exception));
 		}
 	}
+
+	/**
+	 * formats the state variables for JSON serialization
+	 *
+	 * @return array resulting state variables to serialize
+	 **/
+	public function jsonSerialize() : array {
+		$fields = get_object_vars($this);
+
+		return($fields);
+	}
 }
+
 
 
 
