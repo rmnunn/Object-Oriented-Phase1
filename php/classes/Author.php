@@ -25,7 +25,7 @@ class Author implements \JsonSerializable {
 	private $authorId;
 	/**
 	 * token handed out to verify that the profile is valid and not malicious
-	 * @var String $authorActivationToken
+	 * @var string $authorActivationToken
 	 */
 	private $authorActivationToken;
 	/**
@@ -53,7 +53,7 @@ class Author implements \JsonSerializable {
 	 * constructor for this Author
 	 *
 	 * @param string|Uuid $newAuthorId id of this author
-	 * @param Uuid $newAuthorActivationToken activation token for this author
+	 * @param string $newAuthorActivationToken activation token for this author
 	 * @param string $newAuthorAvatarUrl string containing author avatar url
 	 * @param string $newAuthorEmail string containing author's email address
 	 * @param $newAuthorHash author's hashed password
@@ -63,7 +63,7 @@ class Author implements \JsonSerializable {
 	 * @throws \TypeError if data types violate type hints
 	 * @throws \Exception if some other exception occurs
 	 **/
-	public function __construct(Uuid $newAuthorId, String $newAuthorActivationToken, string $newAuthorAvatarUrl, string $newAuthorEmail, $newAuthorHash, string $newAuthorUserName) {
+	public function __construct($newAuthorId, $newAuthorActivationToken, $newAuthorAvatarUrl, $newAuthorEmail, $newAuthorHash, $newAuthorUserName) {
 		try {
 			$this->setAuthorId($newAuthorId);
 			$this->setAuthorActivationToken($newAuthorActivationToken);
@@ -94,7 +94,7 @@ class Author implements \JsonSerializable {
 	 * @throws \RangeException if $newAuthorId is not positive
 	 * @throws \TypeError if the profile Id is not a uuid
 	 */
-	public function setAuthorId(Uuid $newAuthorId): void {
+	public function setAuthorId($newAuthorId): void {
 		try {
 			$uuid = self::validateUuid($newAuthorId);
 		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
@@ -109,19 +109,19 @@ class Author implements \JsonSerializable {
 	 *
 	 * @return string value of activation token
 	 */
-	public function getAuthorActivationToken() : ?String {
+	public function getAuthorActivationToken() : string {
 		return ($this->authorActivationToken);
 	}
 	/**
 	 * mutator method for author activation token
 	 *
-	 * @param String $newAuthorActivationToken
+	 * @param string $newAuthorActivationToken
 	 *
 	 * @throws \InvalidArgumentException  if the token is not a string or insecure
 	 * @throws \RangeException if the token is not exactly 32 characters
 	 * @throws \TypeError if the activation token is not a string
 	 */
-	public function setAuthorActivationToken(?String $newAuthorActivationToken) : void {
+	public function setAuthorActivationToken(string $newAuthorActivationToken) : void {
 		if($newAuthorActivationToken === null) {
 			$this->authorActivationToken = null;
 			return;
@@ -140,7 +140,7 @@ class Author implements \JsonSerializable {
 	 * accessor method for author avatar url
 	 * @return string value of avatar url
 	 */
-	public function getAuthorAvatarUrl() : ?string {
+	public function getAuthorAvatarUrl() : string {
 			return ($this->authorAvatarUrl);
 		}
 	/**
@@ -194,20 +194,29 @@ class Author implements \JsonSerializable {
 		return ($this->authorHash);
 	}
 	/**
-	 * mutator method for author hash
-	 *
-	 * @param string $newAuthorHash
-	 *
-	 * @throws /RangeException if hash is hash string is null
-	 * @throws /RangeException if hash isn't exactly 97 characters
-	 */
-	public function setAuthorHash(?string $newAuthorHash) : void {
-		if ($newAuthorHash === null) {
-			throw (new\RangeException("author needs a hash"));
+	* mutator method for author hash
+	*
+	* @param string $newAuthorHash
+	* @throws \InvalidArgumentException if the hash is not secure
+	* @throws \RangeException if the hash is not 97 characters
+	* @throws \TypeError if author hash is not a string
+	*/
+	public function setAuthorHash(string $newAuthorHash): void {
+		// enforce that the hash is poorly formatted
+		$newAuthorHash = trim($newAuthorHash);
+		if(empty($newAuthorHash) === true) {
+			throw(new \InvalidArgumentException("author hash empty or insecure"));
 		}
-		if (strlen($newAuthorHash) !== 97) {
-			throw (new\RangeException("hash must be 97 characters long"));
+		//enforce the hash is really an Argon hash
+		$authorHashInfo = password_get_info($newAuthorHash);
+		if($authorHashInfo["algoName"] !== "argon2i") {
+			throw(new \InvalidArgumentException("author hash is not a valid hash"));
 		}
+		//enforce that the hash is exactly 97 characters
+		if(strlen($newAuthorHash) > 97) {
+			throw(new \RangeException("author hash must be 97 characters to be valid"));
+		}
+		//store this hash
 		$this->authorHash = $newAuthorHash;
 	}
 
