@@ -295,6 +295,44 @@ class Author implements \JsonSerializable {
 		$parameters = ["authorId" => $this->authorId->getBytes()];
 		$statement->execute($parameters);
 	}
+	/**
+	 * gets author by author id
+	 *
+	 * @param \PDO $pdo  PDO connection object
+	 * @param Uuid|string $authorId author id to search for
+	 * @return Author|null Author found or null if not found
+	 * @throws \PDOException when mySQL error occurs
+	 * @throws \TypeError when author id is not correct data type
+	 */
+	public function getAuthorByAuthorId(\PDO $pdo, $authorId) : ?Author {
+		try {
+			$authorId = self::validateUuid($authorId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw (new \PDOException($exception->getMessage(), 0, $exception));
+		}
+
+		$query = "SELECT authorId, authorActivationToken, AuthorAvatarUrl, authorEmail, authorHash, authorUserName FROM author WHERE authorId = :authorId";
+		$statement = $pdo->prepare($query);
+
+		$parameters = ["authorId" => $authorId->getBytes()];
+		$statement->execute($query);
+
+		// grab the tweet from mySQL
+		try {
+			$author = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+
+			}
+
+		}
+
+
+
+	}
+
+
 
 	/**
 	 * formats the state variables for JSON serialization
