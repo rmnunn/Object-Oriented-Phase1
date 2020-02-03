@@ -246,6 +246,45 @@ class Author implements \JsonSerializable {
 	}
 
 	/**
+	 * inserts author into mySQL database
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when SQL error occurs
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 */
+
+	public function insert(\PDO $pdo) : void {
+
+		// create query template
+		$query = "INSERT INTO author(authorId, authorActivationToken, authorAvatarUrl, authorEmail, authorHash, authorUserName) VALUES(:authorId, :authorActivationToken, :authorAvatarUrl, :authorEmail, :authorHash, :authorUserName)";
+		$statement = $pdo->prepare($query);
+
+		// bind the member variables to the place holders in the template
+		$parameters = ["authorId" => $this->authorId->getBytes(), "authorActivationToken" => $this->authorActivationToken->getBytes(), "authorAvatarUrl" => $this->authorAvatarUrl->getBytes(), "authorEmail" => $this->authorEmail->getBytes(), "authorHash" => $this->authorHash->getBytes(), "authorUserName" => $this->authorUserName->getBytes()];
+		$statement->execute($parameters);
+	}
+	/**
+	 * Updates author in mySQL database
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when SQL error occurs
+	 * @throws \TypeError if $pdo is not a PDO connection object
+	 */
+
+	public function update(\PDO $pdo) : void {
+
+		// create query template
+		$query = "UPDATE author SET (authorId, authorActivationToken, authorAvatarUrl, authorEmail, authorHash, authorUserName) VALUES(:authorId, :authorActivationToken, :authorAvatarUrl, :authorEmail, :authorHash, :authorUserName)";
+		$statement = $pdo->prepare($query);
+
+		// bind the member variables to the place holders in the template
+		$parameters = ["authorId" => $this->authorId->getBytes(), "authorActivationToken" => $this->authorActivationToken->getBytes(), "authorAvatarUrl" => $this->authorAvatarUrl->getBytes(), "authorEmail" => $this->authorEmail->getBytes(), "authorHash" => $this->authorHash->getBytes(), "authorUserName" => $this->authorUserName->getBytes()];
+		$statement->execute($parameters);
+	}
+
+
+
+	/**
 	 * formats the state variables for JSON serialization
 	 *
 	 * @return array resulting state variables to serialize
